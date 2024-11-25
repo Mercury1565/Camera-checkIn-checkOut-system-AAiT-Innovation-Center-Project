@@ -1,6 +1,7 @@
 # Camera Attendance System with Face Recognition
 
-This project consists of two main components:  
+This project uses deepface, a well known face recognition model.
+It consists of two main components:  
 1. **Camera Application Module** - Responsible for handling the camera operations and attendance logic.  
 2. **Face Recognition Server** - Runs the face recognition system as a separate service.
 
