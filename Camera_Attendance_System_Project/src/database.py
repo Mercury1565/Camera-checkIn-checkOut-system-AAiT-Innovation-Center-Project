@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import sql
 
-from src.db_queries import insert_user_query, check_in_query, check_out_query, is_user_checked_in
+from src.db_queries import insert_user_query, check_in_query, check_out_query, is_user_checked_in, is_user_admin, get_user
     
 class Database:
     def __init__(self, dbname, user, password, host='localhost', port=5432):
@@ -75,22 +75,29 @@ class Database:
         return self.execute_query(insert_user_query, (first_name, last_name, email, phone), True)[0]
 
     def check_in(self, user_id):
-        result = self.fetch_all(is_user_checked_in, (user_id,))
+        first_name, last_name = self.fetch_all(get_user, (user_id,))[0]
+        count = self.fetch_all(is_user_checked_in, (user_id,))
         
-        if result[0][0] > 0:
-            print(f"User {user_id} is already checked in.")
-            return
+        if count[0][0] > 0:
+            return first_name, last_name, False
         
         self.execute_query(check_in_query, (user_id,))
-        print(f"User {user_id} checked in successfully.")
-        return user_id
+        return first_name, last_name, True
 
     def check_out(self, user_id):
-        result = self.fetch_all(is_user_checked_in, (user_id,))
+        first_name, last_name = self.fetch_all(get_user, (user_id,))[0]
+        count = self.fetch_all(is_user_checked_in, (user_id,))
 
-        if result[0][0] == 0:
-            print(f"User {user_id} is not checked in.")
-            return
+        if count[0][0] == 0:
+            return first_name, last_name, False
 
         self.execute_query(check_out_query, (user_id,))
-        print(f"User {user_id} checked out successfully.")
+        return first_name, last_name, True
+
+    def check_if_admin(self, user_id):
+        result = self.fetch_all(is_user_admin, (user_id,))
+
+        if result[0][0] == 0:
+            return False
+    
+        return True

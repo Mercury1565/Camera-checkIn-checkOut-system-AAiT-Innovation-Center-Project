@@ -6,6 +6,7 @@ create_user_table = (
     "last_name VARCHAR(100), "
     "email VARCHAR(100), "
     "phone VARCHAR(100), "
+    "is_admin BOOLEAN DEFAULT FALSE,"
     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
     ");"
 )
@@ -28,6 +29,12 @@ insert_user_query = (
     "VALUES (%s, %s, %s, %s) RETURNING user_id;"
 )
 
+##### GET USER WITH ID 
+get_user = (
+    "SELECT first_name, last_name FROM users "
+    "WHERE user_id = %s; "
+)
+
 ##### CHECK-IN QUERY
 check_in_query = (
     "INSERT INTO attendance (user_id, check_in_time, is_checked_in) "
@@ -45,4 +52,10 @@ check_out_query = (
 is_user_checked_in = (
     "SELECT COUNT(*) FROM attendance "
     "WHERE user_id = %s AND is_checked_in = TRUE; "
+)
+
+#### GET USER WITH GIVEN ID AND
+is_user_admin =(
+    "SELECT COUNT(*) FROM attendance "
+    "WHERE user_id = %s AND is_admin = TRUE; "
 )

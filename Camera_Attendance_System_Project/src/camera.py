@@ -1,5 +1,7 @@
 import cv2
 import time
+import os
+import tempfile
 from pathlib import Path
 
 class Camera:
@@ -33,11 +35,24 @@ class Camera:
         if not ret:
             raise Exception("Failed to capture image from webcam")
         
-        # Save the captured frame to the specified path
-        cv2.imwrite(str(image_path), frame)
+        # Convert the captured frame to grayscale
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
+        # Save the grayscale frame
+        cv2.imwrite(str(image_path), gray_frame)
+
         return image_path
 
+    def get_frame(self):
+        """
+        Returns current camera frame
+        """
+        ret, frame = self.camera.read()
+        if not ret:
+            print('Failed to grab frame')
+
+        return frame
+    
     def show_live_feed(self, process_frame_callback=None, duration = 3):
         """
         Displays a live video feed from the webcam until the user presses 'q' to quit.
@@ -45,26 +60,33 @@ class Camera:
         print("Starting live video feed. Press 'q' to exit.")
 
         start_time = time.time()
+        ret, frame = self.camera.read()
+    
+        # Save the frame as a temporary image file
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_image_file:
+            temp_path = "/home/mercury/Desktop/Innovation_Center_Project/Camera_Attendance_System_Project/data/faces" + temp_image_file.name
+            cv2.imwrite(temp_path, frame)
         
         while True:
             ret, frame = self.camera.read()
             if not ret:
                 print("Failed to grab frame.")
                 break
-
+                
             if process_frame_callback:
                 frame = process_frame_callback(frame)
             
-            cv2.imshow('Live Feed', frame)            
+            cv2.imshow('Live Feed', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
             elapsed_time = time.time() - start_time
             if elapsed_time > duration:
                 break
-        
+            
         cv2.destroyAllWindows()
         print("Live feed ended.")
+        return frame
 
     def close(self):
         """

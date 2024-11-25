@@ -2,19 +2,35 @@ from src.app import App
 
 def main():
     app = App()
-    command = int(input('enter command'))
 
-    if command == 1:
-        # REGISTER USER
-        name = input(' enter name to register')
-        app.register_person(name)
-    elif command == 2:
-        # CHECK IN 
-        app.check_in()
-    
-    elif command == 3:
-        # CHECK OUT
-        app.check_out()
+    while(True):
+        command = input('Enter command: [1 : register] [2 : check-in] [3 : check-out] [q : quit] \n')
+
+        if command == 'q':
+            print('GOODBYE!! SAD TO SEE YOU LEAVE :(')
+            break
+
+        while command == '1':
+            # REGISTER USER
+            first_name = input('Enter first name: ')
+
+            if first_name == '':
+                print('Empty name not allowed, input name again')
+                continue
+
+            last_name = input('Enter last name: ')
+            phone = input('Enter phone: ')
+
+            app.register_person(first_name, last_name, phone)
+            break
+        if command == '2':
+            # CHECK IN 
+            app.check_in()
+        elif command == '3':
+            # CHECK OUT
+            app.check_out()
+
+    app.camera.close()
         
 if __name__ == "__main__":
     main()
