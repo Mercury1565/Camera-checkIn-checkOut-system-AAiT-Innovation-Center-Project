@@ -1,3 +1,3 @@
 backend/
-Camera_Attendance_System_Project/venv/
-Face_Recognition_Model_Server/server_env/
+application/venv/
+server/server_env/
