@@ -1,20 +1,15 @@
 from src.camera import Camera
-# from Face_Recognition_Model_Serve.face_recognition import FaceRecognition
 import cv2
 import requests
 import tempfile
-
 from src.database import Database
 
-DATABASE_NAME= 'perago'
-DATABASE_USER= 'mercury'
-DATABASE_PASSWORD= 'herget123'
 
 class App:
     def __init__(self):
         self.camera = Camera(camera_index=0)
         self.name = ''
-        self.database = Database(DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD)
+        self.database = Database()
 
     def process_frame(self, frame):
         """
